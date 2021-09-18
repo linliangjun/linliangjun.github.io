@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"linliangjun.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Windows 10对于 Windows 10，有两种方式安装适用于 Linux 的 Windows 子系统：  手动安装：可以在任意版本的 Windows 10 上安装，但是需要执行多个步骤。 简化安装：使用管理员权限执行命令 wsl --install 即可，但是需要加入 Windows 预览体验计划，并安装 Windows 10 的预览版（内部版本 20262 或更高版本）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安装适用于 Linux 的 Windows 子系统">
+<meta property="og:url" content="http://linliangjun.github.io/2021/09/18/wsl-install/index.html">
+<meta property="og:site_name" content="Github Pages">
+<meta property="og:description" content="Windows 10对于 Windows 10，有两种方式安装适用于 Linux 的 Windows 子系统：  手动安装：可以在任意版本的 Windows 10 上安装，但是需要执行多个步骤。 简化安装：使用管理员权限执行命令 wsl --install 即可，但是需要加入 Windows 预览体验计划，并安装 Windows 10 的预览版（内部版本 20262 或更高版本）。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://linliangjun.github.io/2021/09/18/wsl-install/Snipaste_2021-09-18_16-06-25.png">
+<meta property="og:image" content="http://linliangjun.github.io/2021/09/18/wsl-install/Snipaste_2021-09-18_16-22-24.png">
+<meta property="og:image" content="http://linliangjun.github.io/2021/09/18/wsl-install/Snipaste_2021-09-18_16-32-38.png">
+<meta property="og:image" content="https://docs.microsoft.com/zh-cn/windows/wsl/media/ubuntuinstall.png">
+<meta property="article:published_time" content="2021-09-18T07:29:04.000Z">
+<meta property="article:modified_time" content="2021-09-18T09:41:25.423Z">
+<meta property="article:author" content="林良君">
+<meta property="article:tag" content="wsl">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://linliangjun.github.io/2021/09/18/wsl-install/Snipaste_2021-09-18_16-06-25.png">
+
+
+<link rel="canonical" href="http://linliangjun.github.io/2021/09/18/wsl-install/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linliangjun.github.io/2021/09/18/wsl-install/","path":"2021/09/18/wsl-install/","title":"安装适用于 Linux 的 Windows 子系统"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>安装适用于 Linux 的 Windows 子系统 | Github Pages</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Github Pages</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows-10"><span class="nav-number">1.</span> <span class="nav-text">Windows 10</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%8A%A8%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.</span> <span class="nav-text">手动安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E7%94%A8-%E9%80%82%E7%94%A8%E4%BA%8E-Linux-%E7%9A%84-Windows-%E5%AD%90%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">启用 适用于 Linux 的 Windows 子系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E5%88%B0-WSL2%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="nav-number">1.1.2.</span> <span class="nav-text">更新到 WSL2（可选）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E7%B3%BB%E7%BB%9F%E7%89%88%E6%9C%AC"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">检查系统版本</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%90%AF%E7%94%A8-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%B9%B3%E5%8F%B0"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">启用 虚拟机平台</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD-Linux-%E5%86%85%E6%A0%B8%E6%9B%B4%E6%96%B0%E5%8C%85"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">下载 Linux 内核更新包</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B0%86-WSL2-%E8%AE%BE%E7%BD%AE%E4%B8%BA%E9%BB%98%E8%AE%A4%E7%89%88%E6%9C%AC"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">将 WSL2 设置为默认版本</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Linux-%E5%8F%91%E8%A1%8C%E7%89%88"><span class="nav-number">1.1.3.</span> <span class="nav-text">安装 Linux 发行版</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%9A%E8%BF%87-Microsoft-Store-%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">通过 Microsoft Store 安装</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">直接安装</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8C%96%E5%AE%89%E8%A3%85"><span class="nav-number">1.2.</span> <span class="nav-text">简化安装</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows-Server"><span class="nav-number">2.</span> <span class="nav-text">Windows Server</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="nav-number">3.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="林良君"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">林良君</p>
+  <div class="site-description" itemprop="description">Talk is cheep, show me your code.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/linliangjun" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;linliangjun" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://linliangjun.github.io/2021/09/18/wsl-install/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="林良君">
+      <meta itemprop="description" content="Talk is cheep, show me your code.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Github Pages">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          安装适用于 Linux 的 Windows 子系统
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-09-18 15:29:04 / 修改时间：17:41:25" itemprop="dateCreated datePublished" datetime="2021-09-18T15:29:04+08:00">2021-09-18</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="Windows-10"><a href="#Windows-10" class="headerlink" title="Windows 10"></a>Windows 10</h2><p>对于 Windows 10，有两种方式安装适用于 Linux 的 Windows 子系统：</p>
+<ul>
+<li><b><a href="#manual-installation">手动安装</a></b>：可以在任意版本的 Windows 10 上安装，但是需要执行多个步骤。</li>
+<li><b><a href="#auto-installation">简化安装</a></b>：使用管理员权限执行命令 <code>wsl --install</code> 即可，但是需要加入 <a target="_blank" rel="noopener" href="https://insider.windows.com/zh-cn/getting-started">Windows 预览体验计划</a>，并安装 Windows 10 的预览版（内部版本 20262 或更高版本）。</li>
+</ul>
+<span id="more"></span>
+
+<blockquote>
+<p>上述两种方式同样适用于 Windows 11；所有命令均在 Power Shell 中执行。 </p>
+</blockquote>
+<h3 id="手动安装"><a href="#手动安装" class="headerlink" title="手动安装"></a><span id="manual-installation">手动安装</span></h3><h4 id="启用-适用于-Linux-的-Windows-子系统"><a href="#启用-适用于-Linux-的-Windows-子系统" class="headerlink" title="启用 适用于 Linux 的 Windows 子系统"></a>启用 适用于 Linux 的 Windows 子系统</h4><p>在 Windows 功能的窗口中，启用 <strong>适用于 Linux 的 Windows 子系统</strong> 功能，然后重启计算机。</p>
+<img alt="enable-wsl" width="400" height="400" src="/2021/09/18/wsl-install/Snipaste_2021-09-18_16-06-25.png">
+
+<p>或者，使用管理员权限执行命令：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dism.exe /online /<span class="built_in">enable-feature</span> /featurename:Microsoft<span class="literal">-Windows</span><span class="literal">-Subsystem</span><span class="literal">-Linux</span> /all /norestart</span><br></pre></td></tr></table></figure>
+
+<h4 id="更新到-WSL2（可选）"><a href="#更新到-WSL2（可选）" class="headerlink" title="更新到 WSL2（可选）"></a>更新到 WSL2（可选）</h4><h5 id="检查系统版本"><a href="#检查系统版本" class="headerlink" title="检查系统版本"></a>检查系统版本</h5><p>WSL2 要求操作系统的最低版本为：</p>
+<ul>
+<li>对于 x64 系统，需要 1903（内部版本 18362）或更高版本。</li>
+<li>对于 ARM64 系统，需要 2004（内部版本 19041）或更高版本。</li>
+</ul>
+<p>若要检查系统版本及内部版本号，按下 <kbd>windows</kbd> + <kbd>R</kbd> 键，然后输入 <code>winver</code>，点击“确定”即可。</p>
+<h5 id="启用-虚拟机平台"><a href="#启用-虚拟机平台" class="headerlink" title="启用 虚拟机平台"></a>启用 虚拟机平台</h5><p>在 Windows 功能的窗口中，启用 <strong>虚拟机平台</strong> 功能，然后重启计算机。</p>
+<img alt="enable-wsl" width="400" height="400" src="/2021/09/18/wsl-install/Snipaste_2021-09-18_16-22-24.png">
+
+<p>或者，使用管理员权限执行命令：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dism.exe /online /<span class="built_in">enable-feature</span> /featurename:VirtualMachinePlatform /all /norestart</span><br></pre></td></tr></table></figure>
+
+<h5 id="下载-Linux-内核更新包"><a href="#下载-Linux-内核更新包" class="headerlink" title="下载 Linux 内核更新包"></a>下载 Linux 内核更新包</h5><ul>
+<li><a target="_blank" rel="noopener" href="https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi">适用于 x64 系统的 WSL2 Linux 内核更新包</a></li>
+<li><a target="_blank" rel="noopener" href="https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_arm64.msi">适用于 ARM64 系统的 WSL2 Linux 内核更新包</a></li>
+</ul>
+<p>双击以运行下载的更新包。（系统将提示你提供提升的权限，选择“是”以批准此安装）</p>
+<h5 id="将-WSL2-设置为默认版本"><a href="#将-WSL2-设置为默认版本" class="headerlink" title="将 WSL2 设置为默认版本"></a>将 WSL2 设置为默认版本</h5><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl -<span class="literal">-set</span><span class="literal">-default</span><span class="literal">-version</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+
+<h4 id="安装-Linux-发行版"><a href="#安装-Linux-发行版" class="headerlink" title="安装 Linux 发行版"></a>安装 Linux 发行版</h4><h5 id="通过-Microsoft-Store-安装"><a href="#通过-Microsoft-Store-安装" class="headerlink" title="通过 Microsoft Store 安装"></a>通过 Microsoft Store 安装</h5><p>打开 Microsoft Store，搜索 linux，按喜好安装。</p>
+<img alt="install your Linux distribution on microsoft store" src="/2021/09/18/wsl-install/Snipaste_2021-09-18_16-32-38.png" width="900" height="500">
+
+<h5 id="直接安装"><a href="#直接安装" class="headerlink" title="直接安装"></a>直接安装</h5><p>在许多情况下，你可能无法（或不想）通过 Microsoft Store 安装 WSL Linux 发行版。具体而言，你可能正在运行不支持 Microsoft Store 的长期服务系统 (Windows LTSC) ，或者你的公司网络策略 和/或 管理员不允许在你的环境中使用 Microsoft Store。</p>
+<p>如果无法使用 Microsoft Store，可以点击下面的链接下载并手动安装 Linux 发行版：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://aka.ms/wslubuntu2004">Ubuntu 20.04</a></li>
+<li><a target="_blank" rel="noopener" href="https://aka.ms/wslubuntu2004arm">Ubuntu 20.04 ARM</a></li>
+<li><a target="_blank" rel="noopener" href="https://aka.ms/wsl-ubuntu-1804">Ubuntu 18.04</a></li>
+<li><a target="_blank" rel="noopener" href="https://aka.ms/wsl-ubuntu-1804-arm">Ubuntu 18.04 ARM</a></li>
+<li><a target="_blank" rel="noopener" href="https://aka.ms/wsl-ubuntu-1604">Ubuntu 16.04</a></li>
+<li><a target="_blank" rel="noopener" href="https://aka.ms/wsl-debian-gnulinux">Debian GNU/Linux</a></li>
+<li><a target="_blank" rel="noopener" href="https://aka.ms/wsl-kali-linux-new">Kali Linux</a></li>
+<li><a target="_blank" rel="noopener" href="https://aka.ms/wsl-sles-12">SUSE Linux Enterprise Server 12</a></li>
+<li><a target="_blank" rel="noopener" href="https://aka.ms/wsl-SUSELinuxEnterpriseServer15SP2">SUSE Linux Enterprise Server 15 SP2</a></li>
+<li><a target="_blank" rel="noopener" href="https://aka.ms/wsl-opensuseleap15-2">OpenSUSE Leap 15.2</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/WhitewaterFoundry/WSLFedoraRemix/releases">Fedora Remix for WSL</a></li>
+</ul>
+<p>或者，可以使用命令进行下载（以 Ubuntu 16.04 为例）：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl.exe <span class="literal">-L</span> <span class="literal">-o</span> ubuntu<span class="literal">-1604</span>.appx https://aka.ms/wsl<span class="literal">-ubuntu</span><span class="literal">-1604</span></span><br></pre></td></tr></table></figure>
+
+<p>然后定位到下载的文件所在的文件夹，执行命令：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Add-AppxPackage</span> .\app_name.appx</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>app_name.appx</code> 是发行版的文件名。</p>
+<h5 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h5><p>首次启动新安装的 Linux 发行版时，将打开一个控制台窗口，系统会要求你等待一分钟或两分钟，以便文件解压缩并存储到电脑上。 未来的所有启动时间应不到一秒。</p>
+<p>然后，需要为新的 Linux 发行版创建用户帐户和密码。</p>
+<p><img src="https://docs.microsoft.com/zh-cn/windows/wsl/media/ubuntuinstall.png" alt="success"></p>
+<h3 id="简化安装"><a href="#简化安装" class="headerlink" title="简化安装"></a><span id="auto-installation">简化安装</span></h3><p>在最新的 Windows 预览体验预览版中，显著改进了适用于 Linux 的 Windows 子系统的安装过程，从原本的多个步骤替换为一条命令。<br>使用简化安装，必须加入 Windows 预览体验计划 并安装 Windows 10 的预览版（20262 或更高版本），然后使用管理员权限执行命令：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl -<span class="literal">-install</span></span><br></pre></td></tr></table></figure>
+
+<p>默认情况下，安装的 Linux 发行版为 Ubuntu。可以使用 <code>wsl --install -d &lt;Distribution Name&gt;</code> 进行更改。（将 <code>&lt;Distribution Name&gt;</code> 替换为所需发行版的名称）若要查看可用 Linux 发行版的列表，请输入 wsl –list –online。</p>
+<p>初始安装后，可以使用 <code>wsl --install -d &lt;Distribution Name&gt;</code> 命令将其他 Linux 发行版添加到计算机。</p>
+<h2 id="Windows-Server"><a href="#Windows-Server" class="headerlink" title="Windows Server"></a>Windows Server</h2><p>由于没有使用过该版本的系统，因此省略。</p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ol>
+<li>Microsoft：<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/wsl/install-win10">适用于 Linux 的 Windows 子系统安装指南 (Windows 10)</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/wsl/install-manual">手动下载适用于 Linux 的 Windows 子系统发行版包</a></li>
+</ul>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/wsl/" rel="tag"># wsl</a>
+          </div>
+
+        
+
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">林良君</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
