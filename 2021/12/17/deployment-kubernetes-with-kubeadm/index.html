@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"linliangjun.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Kubeadm 是一键部署 Kubernetes 集群的工具。对于控制平面节点，只需执行 kubeadm init 命令；对于工作节点，只需执行 kubeadm join 命令。上述两条命令即可完成从集群初始化到加入集群的过程，相较于传统的二进制安装，极大降低了部署的工作量。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 Kubeadm 部署 Kubernetes">
+<meta property="og:url" content="http://linliangjun.github.io/2021/12/17/deployment-kubernetes-with-kubeadm/index.html">
+<meta property="og:site_name" content="Github Pages">
+<meta property="og:description" content="Kubeadm 是一键部署 Kubernetes 集群的工具。对于控制平面节点，只需执行 kubeadm init 命令；对于工作节点，只需执行 kubeadm join 命令。上述两条命令即可完成从集群初始化到加入集群的过程，相较于传统的二进制安装，极大降低了部署的工作量。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://linliangjun.github.io/2021/12/17/deployment-kubernetes-with-kubeadm/image.png">
+<meta property="article:published_time" content="2021-12-17T01:34:09.000Z">
+<meta property="article:modified_time" content="2021-12-17T06:11:31.779Z">
+<meta property="article:author" content="林良君">
+<meta property="article:tag" content="Kubernetes">
+<meta property="article:tag" content="Kubeadm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://linliangjun.github.io/2021/12/17/deployment-kubernetes-with-kubeadm/image.png">
+
+
+<link rel="canonical" href="http://linliangjun.github.io/2021/12/17/deployment-kubernetes-with-kubeadm/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linliangjun.github.io/2021/12/17/deployment-kubernetes-with-kubeadm/","path":"2021/12/17/deployment-kubernetes-with-kubeadm/","title":"使用 Kubeadm 部署 Kubernetes"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>使用 Kubeadm 部署 Kubernetes | Github Pages</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Github Pages</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AE%E4%BF%9D%E4%B8%BB%E6%9C%BA%E5%90%8D%E3%80%81MAC-%E5%9C%B0%E5%9D%80%E5%92%8C-product-uuid-%E5%94%AF%E4%B8%80"><span class="nav-number">1.1.</span> <span class="nav-text">确保主机名、MAC 地址和 product_uuid 唯一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%81%E8%AE%B8-iptables-%E6%A3%80%E6%9F%A5%E6%A1%A5%E6%8E%A5%E6%B5%81%E9%87%8F"><span class="nav-number">1.2.</span> <span class="nav-text">允许 iptables 检查桥接流量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E6%94%BE%E7%AB%AF%E5%8F%A3"><span class="nav-number">1.3.</span> <span class="nav-text">开放端口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6"><span class="nav-number">1.4.</span> <span class="nav-text">安装容器运行时</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-cgroup-%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.4.1.</span> <span class="nav-text">配置 cgroup 驱动程序</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-kubeadm%E3%80%81kubelet-%E5%92%8C-kubectl"><span class="nav-number">1.5.</span> <span class="nav-text">安装 kubeadm、kubelet 和 kubectl</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E-Debian-%E7%9A%84%E5%8F%91%E8%A1%8C%E7%89%88"><span class="nav-number">1.5.1.</span> <span class="nav-text">基于 Debian 的发行版</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E-Red-Hat-%E7%9A%84%E5%8F%91%E8%A1%8C%E7%89%88"><span class="nav-number">1.5.2.</span> <span class="nav-text">基于 Red Hat 的发行版</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%8E%A7%E5%88%B6%E5%B9%B3%E9%9D%A2%E8%8A%82%E7%82%B9"><span class="nav-number">2.</span> <span class="nav-text">初始化控制平面节点</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="林良君"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">林良君</p>
+  <div class="site-description" itemprop="description">Talk is cheep, show me your code.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/linliangjun" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;linliangjun" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://linliangjun.github.io/2021/12/17/deployment-kubernetes-with-kubeadm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="林良君">
+      <meta itemprop="description" content="Talk is cheep, show me your code.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Github Pages">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用 Kubeadm 部署 Kubernetes
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-12-17 09:34:09 / 修改时间：14:11:31" itemprop="dateCreated datePublished" datetime="2021-12-17T09:34:09+08:00">2021-12-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Kubeadm 是一键部署 Kubernetes 集群的工具。对于控制平面节点，只需执行 <code>kubeadm init</code> 命令；对于工作节点，只需执行 <code>kubeadm join</code> 命令。上述两条命令即可完成从集群初始化到加入集群的过程，相较于传统的二进制安装，极大降低了部署的工作量。</p>
+<span id="more"></span>
+
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>准备一台或多台操作系统为 Linux 发行版的计算机，至少 2 个 CPU 核心以及 2 GiB 内存，且禁用内存交换功能。如果是多台计算机，则要保证彼此之间的网络均能互相连接（公网和内网都可以），且不可以有重复的主机名、MAC 地址或 product_uuid。</p>
+<h3 id="确保主机名、MAC-地址和-product-uuid-唯一"><a href="#确保主机名、MAC-地址和-product-uuid-唯一" class="headerlink" title="确保主机名、MAC 地址和 product_uuid 唯一"></a>确保主机名、MAC 地址和 product_uuid 唯一</h3><p>一般来讲，硬件设备会拥有唯一的地址，但是有些虚拟机的地址可能会重复。Kubernetes 使用这些值来唯一确定集群中的节点。如果这些值在每个节点上不唯一，可能会导致安装失败。</p>
+<ul>
+<li>执行命令 <code>ip link</code> 或 <code>ifconfig -a</code> 查看 MAC 地址</li>
+<li>执行命令 <code>sudo cat /sys/class/dmi/id/product_uuid</code> 查看 product_uuid</li>
+</ul>
+<h3 id="允许-iptables-检查桥接流量"><a href="#允许-iptables-检查桥接流量" class="headerlink" title="允许 iptables 检查桥接流量"></a>允许 iptables 检查桥接流量</h3><p>确保 br_netfilter 模块被加载，执行命令 <code>lsmod | grep br_netfilter</code> 查看是否被加载。若要加载该模块，执行命令 <code>sudo modprobe br_netfilter</code>。</p>
+<p>为了让 Linux 节点上的 iptables 能够正确地查看桥接流量，需要确保在 sysctl 配置中 <code>net.bridge.bridge-nf-call-iptables=1</code>，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/k8s.conf</span></span><br><span class="line"><span class="string">br_netfilter</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">cat &lt;&lt;<span class="string">EOF | sudo tee /etc/sysctl.d/k8s.conf</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-ip6tables = 1</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-iptables = 1</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">sudo sysctl --system</span><br></pre></td></tr></table></figure>
+
+<h3 id="开放端口"><a href="#开放端口" class="headerlink" title="开放端口"></a>开放端口</h3><p><strong>控制平面节点</strong></p>
+<table>
+<thead>
+<tr>
+<th>协议</th>
+<th>方向</th>
+<th>端口范围</th>
+<th align="left">作用</th>
+<th>使用者</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TCP</td>
+<td>入站</td>
+<td>2379-2380</td>
+<td align="left">etcd 服务器客户端 API</td>
+<td>kube-apiserver, etcd</td>
+</tr>
+<tr>
+<td>TCP</td>
+<td>入站</td>
+<td>6443</td>
+<td align="left">Kubernetes API 服务器</td>
+<td>所有组件</td>
+</tr>
+<tr>
+<td>TCP</td>
+<td>入站</td>
+<td>10250</td>
+<td align="left">Kubelet API</td>
+<td>kubelet 自身、控制平面组件</td>
+</tr>
+<tr>
+<td>TCP</td>
+<td>入站</td>
+<td>10251</td>
+<td align="left">kube-scheduler</td>
+<td>kube-scheduler 自身</td>
+</tr>
+<tr>
+<td>TCP</td>
+<td>入站</td>
+<td>10252</td>
+<td align="left">kube-controller-manager</td>
+<td>kube-controller-manager 自身</td>
+</tr>
+</tbody></table>
+<p><strong>工作节点</strong></p>
+<table>
+<thead>
+<tr>
+<th>协议</th>
+<th>方向</th>
+<th>端口范围</th>
+<th>作用</th>
+<th>使用者</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TCP</td>
+<td>入站</td>
+<td>10250</td>
+<td>Kubelet API</td>
+<td>kubelet 自身、控制平面组件</td>
+</tr>
+<tr>
+<td>TCP</td>
+<td>入站</td>
+<td>30000-32767</td>
+<td>NodePort 端口</td>
+<td>所有组件</td>
+</tr>
+</tbody></table>
+<h3 id="安装容器运行时"><a href="#安装容器运行时" class="headerlink" title="安装容器运行时"></a>安装容器运行时</h3><p>默认情况下，Kubernetes 使用容器运行时接口（Container Runtime Interface，CRI）来与你所选择的容器运行时交互。</p>
+<p>如果你不指定运行时，则 kubeadm 会自动尝试检测到系统上已经安装的运行时，方法是扫描一组众所周知的 Unix 域套接字。下面的表格列举了一些容器运行时及其对应的套接字路径：</p>
+<table>
+<thead>
+<tr>
+<th align="left">运行时</th>
+<th align="left">域套接字</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Docker</td>
+<td align="left">/var/run/dockershim.sock</td>
+</tr>
+<tr>
+<td align="left">containerd</td>
+<td align="left">/run/containerd/containerd.sock</td>
+</tr>
+<tr>
+<td align="left">CRI-O</td>
+<td align="left">/var/run/crio/crio.sock</td>
+</tr>
+</tbody></table>
+<p>如果同时检测到 Docker 和 containerd 则优先选择 Docker。这是必然的，因为 Docker 18.09 附带了 containerd 并且两者都是可以检测到的。如果检测到其他两个或多个运行时，kubeadm 会输出错误信息并退出。</p>
+<h4 id="配置-cgroup-驱动程序"><a href="#配置-cgroup-驱动程序" class="headerlink" title="配置 cgroup 驱动程序"></a>配置 cgroup 驱动程序</h4><p>确保容器运行时和 kubelet 所使用的是相同的 cgroup 驱动，否则 kubelet 进程会失败。</p>
+<h3 id="安装-kubeadm、kubelet-和-kubectl"><a href="#安装-kubeadm、kubelet-和-kubectl" class="headerlink" title="安装 kubeadm、kubelet 和 kubectl"></a>安装 kubeadm、kubelet 和 kubectl</h3><p>你需要在每台机器上安装以下的软件包：</p>
+<ul>
+<li>kubeadm：用来初始化集群的指令</li>
+<li>kubelet：在集群中的每个节点上用来启动 Pod 和容器等</li>
+<li>kubectl：用来与集群通信的命令行工具</li>
+</ul>
+<h4 id="基于-Debian-的发行版"><a href="#基于-Debian-的发行版" class="headerlink" title="基于 Debian 的发行版"></a>基于 Debian 的发行版</h4><ol>
+<li><p>更新 apt 包索引并安装使用 Kubernetes apt 仓库所需要的包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y apt-transport-https ca-certificates curl</span><br></pre></td></tr></table></figure></li>
+<li><p>下载 Google Cloud 公开签名秘钥</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg</span><br></pre></td></tr></table></figure></li>
+<li><p>添加 Kubernetes apt 仓库</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main&quot;</span> | sudo tee /etc/apt/sources.list.d/kubernetes.list</span><br></pre></td></tr></table></figure></li>
+<li><p>更新 apt 包索引，安装 kubelet、kubeadm 和 kubectl，并锁定其版本</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y kubelet kubeadm kubectl</span><br><span class="line">sudo apt-mark hold kubelet kubeadm kubectl</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>对于第 2、3 步，国内（中国）用户若无法访问可以使用阿里云镜像代替，以 root 身份执行命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | apt-key add -</span><br><span class="line">cat &gt; /etc/apt/sources.list.d/kubernetes.list &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="基于-Red-Hat-的发行版"><a href="#基于-Red-Hat-的发行版" class="headerlink" title="基于 Red Hat 的发行版"></a>基于 Red Hat 的发行版</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;<span class="string">EOF | sudo tee /etc/yum.repos.d/kubernetes.repo</span></span><br><span class="line"><span class="string">[kubernetes]</span></span><br><span class="line"><span class="string">name=Kubernetes</span></span><br><span class="line"><span class="string">baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch</span></span><br><span class="line"><span class="string">enabled=1</span></span><br><span class="line"><span class="string">gpgcheck=1</span></span><br><span class="line"><span class="string">repo_gpgcheck=1</span></span><br><span class="line"><span class="string">gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg</span></span><br><span class="line"><span class="string">exclude=kubelet kubeadm kubectl</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 SELinux 设置为 permissive 模式（相当于将其禁用）</span></span><br><span class="line">sudo setenforce 0</span><br><span class="line">sudo sed -i <span class="string">&#x27;s/^SELINUX=enforcing$/SELINUX=permissive/&#x27;</span> /etc/selinux/config</span><br><span class="line"></span><br><span class="line">sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes</span><br><span class="line"></span><br><span class="line">sudo systemctl <span class="built_in">enable</span> --now kubelet</span><br></pre></td></tr></table></figure>
+
+<p>运行命令 setenforce 0 和 sed … 将 SELinux 设置为 permissive 模式可以有效地将其禁用。这是允许容器访问主机文件系统所必需的，而这些操作是为了例如 Pod 网络正常工作。你必须这么做，直到 kubelet 做出对 SELinux 的支持进行升级为止。如果你知道如何配置 SELinux 则可以将其保持启用状态，但可能需要设定 kubeadm 不支持的部分配置。</p>
+<h2 id="初始化控制平面节点"><a href="#初始化控制平面节点" class="headerlink" title="初始化控制平面节点"></a>初始化控制平面节点</h2><p>控制平面节点是运行控制平面组件的计算机，包括 etcd （集群数据库） 和 API Server （命令行工具 kubectl 与之通信）。</p>
+<p>要初始化控制平面节点，请执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm init &lt;opts&gt;</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>opts</code> 是初始化的可选项，下面列出了常用的选项：</p>
+<ol>
+<li><code>--image-repository</code>：指定组件的镜像仓库地址，默认为 k8s.gcr.io。如果是国内（中国）用户，可以指定为<code>registry.aliyuncs.com/google_containers</code></li>
+<li><code>--kubernetes-version</code> 指定 Kubernetes 版本，默认为最新版</li>
+<li><code>--apiserver-advertise-address</code>: 指定 kube-apiserver 组件监听的 IP 地址，如未设置则为默认的网络适配器 IP 地址</li>
+<li><code>--apiserver-bind-port</code>：指定 kube-apiserver 监听的端口，默认为 6443</li>
+<li><code>--pod-network-cidr</code> 指定 Pod IP 地址段，不能与集群中的其它地址段冲突</li>
+<li><code>--service-cidr</code>：指定 Service IP 地址段，默认为：10.96.0.0/12，不能与集群中的其他地址段冲突</li>
+<li><code>--control-plane-endpoint</code> 指定控制平面端点，用于多主节点负载均衡</li>
+<li><code>--cri-socket</code> 指定容器运行时，只有机器上安装了多个容器运行时才需要指定</li>
+</ol>
+<p>下面的示例表示初始化控制平面节点的 Kubernetes 版本为 1.23.0；组件镜像仓库为阿里云；Pod IP 地址段为 10.244.0.0/16；其它选项均为默认。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm init --kubernetes-version 1.23.0 --image-repository registry.aliyuncs.com/google_containers --pod-network-cidr 10.244.0.0/16</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果控制平面节点无法访问到公网，那么可以执行 <code>kubeadm config images list</code> 列出所需的组件镜像，然后手动导入即可。</p>
+</blockquote>
+<p><code>kubeadm init</code> 首先运行一系列预检查以确保计算机可以运行 Kubernetes。这些预检查会显示警告并在错误时退出。然后 kubeadm init 下载并安装集群控制平面组件。这可能会需要几分钟。完成之后你应该看到：</p>
+<img alt="enable-wsl" width="800" height="300" src="/2021/12/17/deployment-kubernetes-with-kubeadm/image.png">
+
+<p>根据提示，非 root 用户请执行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">sudo cp -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">sudo chown $(id -u):$(id -g) <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure>
+
+<p>或者，如果你是 root 用户，则可以执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> KUBECONFIG=/etc/kubernetes/admin.conf</span><br></pre></td></tr></table></figure>
+
+<p>之后，你需要保存 <code>kubeadm join ...</code>，这是工作节点加入集群的命令。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+              <a href="/tags/Kubeadm/" rel="tag"># Kubeadm</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/09/18/wsl-install/" rel="prev" title="安装适用于 Linux 的 Windows 子系统（WSL）">
+                  <i class="fa fa-chevron-left"></i> 安装适用于 Linux 的 Windows 子系统（WSL）
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">林良君</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
