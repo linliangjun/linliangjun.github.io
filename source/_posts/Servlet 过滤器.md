@@ -44,7 +44,7 @@ public interface Filter {
     // 调用 chain.doFilter(request, response) 将控制权交给下一个 Filter 或目标 Servlet
     // 否则，请求会被阻止，不会继续执行后续的 Filter 或 Servlet
     void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException;
+        throws IOException, ServletException;
 
     default void destroy() {
     }
@@ -82,10 +82,10 @@ public interface Filter {
 @WebFilter("/myServlet")
 public class MyFilter implements Filter {
 
-  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+        throws IOException, ServletException {
     // 具体的过滤逻辑
-  }
+    }
 }
 ```
 
