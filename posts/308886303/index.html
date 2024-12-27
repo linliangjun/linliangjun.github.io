@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.linliangjun.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Spring Security 是一个 Java 框架，用于保护应用程序的安全性。它提供了一套全面的安全解决方案，包括身份验证、授权、防止攻击等功能。Spring Security 基于过滤器链的概念，可以轻松地集成到任何基于 Spring 的应用程序中。它支持多种身份验证选项和授权策略，开发人员可以根据需要选择适合的方式。此外，Spring Security 还提供了一些附加功能，如集成第三方身">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Security">
+<meta property="og:url" content="https://blog.linliangjun.cn/posts/308886303/index.html">
+<meta property="og:site_name" content="Boring blog">
+<meta property="og:description" content="Spring Security 是一个 Java 框架，用于保护应用程序的安全性。它提供了一套全面的安全解决方案，包括身份验证、授权、防止攻击等功能。Spring Security 基于过滤器链的概念，可以轻松地集成到任何基于 Spring 的应用程序中。它支持多种身份验证选项和授权策略，开发人员可以根据需要选择适合的方式。此外，Spring Security 还提供了一些附加功能，如集成第三方身">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.linliangjun.cn/posts/308886303/2024-12-26-1001.png">
+<meta property="og:image" content="https://blog.linliangjun.cn/posts/308886303/2024-12-27-1001.png">
+<meta property="article:published_time" content="2024-12-26T13:51:55.000Z">
+<meta property="article:modified_time" content="2024-12-27T06:36:44.163Z">
+<meta property="article:author" content="shark chili">
+<meta property="article:tag" content="Spring Security">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.linliangjun.cn/posts/308886303/2024-12-26-1001.png">
+
+<link rel="canonical" href="https://blog.linliangjun.cn/posts/308886303/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Spring Security | Boring blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Boring blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">RTFSC</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.linliangjun.cn/posts/308886303/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://i.ssjz8.com/upload/1/img2.baidu.com%2Fit%2Fu%3D3694723015%2C609042305%26fm%3D253%26fmt%3Dauto%26app%3D138%26f%3DJPEG%3Fw%3D500%26h%3D500">
+      <meta itemprop="name" content="shark chili">
+      <meta itemprop="description" content="Talk is cheap. Show me the code.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Boring blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Spring Security
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-12-26 21:51:55" itemprop="dateCreated datePublished" datetime="2024-12-26T21:51:55+08:00">2024-12-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-12-27 14:36:44" itemprop="dateModified" datetime="2024-12-27T14:36:44+08:00">2024-12-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Spring Security 是一个 Java 框架，用于保护应用程序的安全性。它提供了一套全面的安全解决方案，包括身份验证、授权、防止攻击等功能。Spring Security 基于过滤器链的概念，可以轻松地集成到任何基于 Spring 的应用程序中。它支持多种身份验证选项和授权策略，开发人员可以根据需要选择适合的方式。此外，Spring Security 还提供了一些附加功能，如集成第三方身份验证提供商和单点登录，以及会话管理和密码加密等。总之，Spring Security 是一个强大且易于使用的框架，可以帮助开发人员提高应用程序的安全性和可靠性。</p>
+<span id="more"></span>
+
+<h2 id="Spring-Security-的过滤器链"><a href="#Spring-Security-的过滤器链" class="headerlink" title="Spring Security 的过滤器链"></a>Spring Security 的过滤器链</h2><p><img src="/posts/308886303/2024-12-26-1001.png"></p>
+<h2 id="建造者模式（Builder-Pattern）与-SecurityBuilder"><a href="#建造者模式（Builder-Pattern）与-SecurityBuilder" class="headerlink" title="建造者模式（Builder Pattern）与 SecurityBuilder"></a>建造者模式（Builder Pattern）与 SecurityBuilder</h2><p>建造者模式旨在将一个复杂对象的构建过程与它的表示分离，使得同样的构建过程可以创建不同的表示。简单来说，它通过一步步地构建一个复杂对象，并将构建过程和表示分开，以便于在构建过程中控制产品的各个部分。</p>
+<p>在 Spring Security 中，与安全性相关的组件（例如：SecurityFilterChain、AuthenticationManager）都是通过建造者模式实例化的。Spring Security 为此抽象出了一个 SecurityBuilder 接口，源码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.security.config.annotation;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">SecurityBuilder</span>&lt;O&gt; &#123;</span><br><span class="line"></span><br><span class="line">    O <span class="title function_">build</span><span class="params">()</span> <span class="keyword">throws</span> Exception;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>AbstractSecurityBuilder 是 SecurityBuilder 的一个抽象实现，它能确保只会构建一次安全组件，源码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.security.config.annotation;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.atomic.AtomicBoolean;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">AbstractSecurityBuilder</span>&lt;O&gt; <span class="keyword">implements</span> <span class="title class_">SecurityBuilder</span>&lt;O&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">AtomicBoolean</span> <span class="variable">building</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AtomicBoolean</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> O object;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> O <span class="title function_">build</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">// CAS 乐观锁</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span>.building.compareAndSet(<span class="literal">false</span>, <span class="literal">true</span>)) &#123;</span><br><span class="line">            <span class="built_in">this</span>.object = doBuild();</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.object;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">AlreadyBuiltException</span>(<span class="string">&quot;This object has already been built&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> O <span class="title function_">getObject</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">this</span>.building.get()) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>(<span class="string">&quot;This object has not been built&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 这里是有可能获取到 null 的</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.object;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">abstract</span> O <span class="title function_">doBuild</span><span class="params">()</span> <span class="keyword">throws</span> Exception;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>HttpSecurityBuilder 是 SecurityBuilder 的一个抽象实现，旨在构建 DefaultSecurityFilterChain 对象（Spring Security 的过滤器链）。源码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.security.config.annotation.web;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.security.authentication.AuthenticationProvider;</span><br><span class="line"><span class="keyword">import</span> org.springframework.security.core.userdetails.UserDetailsService;</span><br><span class="line"><span class="keyword">import</span> org.springframework.security.web.DefaultSecurityFilterChain;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> jakarta.servlet.Filter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">HttpSecurityBuilder</span>&lt;H <span class="keyword">extends</span> <span class="title class_">HttpSecurityBuilder</span>&lt;H&gt;&gt;</span><br><span class="line">    <span class="keyword">extends</span> <span class="title class_">SecurityBuilder</span>&lt;DefaultSecurityFilterChain&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 省略了部分当前不重要的方法</span></span><br><span class="line"></span><br><span class="line">    H <span class="title function_">authenticationProvider</span><span class="params">(AuthenticationProvider authenticationProvider)</span>;</span><br><span class="line"></span><br><span class="line">    H <span class="title function_">userDetailsService</span><span class="params">(UserDetailsService userDetailsService)</span> <span class="keyword">throws</span> Exception;</span><br><span class="line"></span><br><span class="line">    H <span class="title function_">addFilterAfter</span><span class="params">(Filter filter, Class&lt;? extends Filter&gt; afterFilter)</span>;</span><br><span class="line"></span><br><span class="line">    H <span class="title function_">addFilterBefore</span><span class="params">(Filter filter, Class&lt;? extends Filter&gt; beforeFilter)</span>;</span><br><span class="line"></span><br><span class="line">    H <span class="title function_">addFilter</span><span class="params">(Filter filter)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以，可以总结出通过 SecurityBuilder 构建安全组件的流程为：</p>
+<ol>
+<li>以链式调用的方式传入子组件（这个要看具体的实现类支持传入什么子组件）</li>
+<li>最后调用 build 方法构建安全组件（如果是 AbstractSecurityBuilder，多次调用会报错）</li>
+</ol>
+<h2 id="配置式编程与-SecurityConfigurer"><a href="#配置式编程与-SecurityConfigurer" class="headerlink" title="配置式编程与 SecurityConfigurer"></a>配置式编程与 SecurityConfigurer</h2><p>SecurityBuilder 为构建安全组件提供了统一的流程，只要传入需要的子组件即可。但是面对不同的安全场景，有时候需要传入某个子组件，有时候又不需要；有时候子组件需要设置一个属性，有时候又不需要设置。如果以更加本质的视角看待这些行为，其实就是根据不同的场景，设置不同的配置。</p>
+<p>这就是命令式编程与配置式编程的区别了。前者通过明确的步骤和命令告诉计算机如何完成任务；后者通过设置高层次的配置定义行为和规则，而不需要指定具体的操作步骤，框架或工具根据配置自动推断并执行相关操作。</p>
+<p>对于安全场景，很难做到面面俱到，因此 Spring Security 也抽象出了 SecurityConfigurer 接口。源码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.security.config.annotation;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">SecurityConfigurer</span>&lt;O, B <span class="keyword">extends</span> <span class="title class_">SecurityBuilder</span>&lt;O&gt;&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">init</span><span class="params">(B builder)</span> <span class="keyword">throws</span> Exception;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">configure</span><span class="params">(B builder)</span> <span class="keyword">throws</span> Exception;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="支持配置式编程的-SecurityBuilder"><a href="#支持配置式编程的-SecurityBuilder" class="headerlink" title="支持配置式编程的 SecurityBuilder"></a>支持配置式编程的 SecurityBuilder</h2><p>AbstractConfiguredSecurityBuilder 是支持配置式编程的 SecurityBuilder，是一个 SecurityConfigurer 容器。维护 SecurityConfigurer 的方法如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.security.config.annotation;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 省略了 import</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">AbstractConfiguredSecurityBuilder</span>&lt;O, B <span class="keyword">extends</span> <span class="title class_">SecurityBuilder</span>&lt;O&gt;&gt;</span><br><span class="line">    <span class="keyword">extends</span> <span class="title class_">AbstractSecurityBuilder</span>&lt;O&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实际存储 SecurityConfigurer 的容器</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> LinkedHashMap&lt;Class&lt;? <span class="keyword">extends</span> <span class="title class_">SecurityConfigurer</span>&lt;O, B&gt;&gt;, List&lt;SecurityConfigurer&lt;O, B&gt;&gt;&gt; configurers = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 是否允许添加相同类型的 SecurityConfigurer</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">boolean</span> allowConfigurersOfSameType;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> &lt;C <span class="keyword">extends</span> <span class="title class_">SecurityConfigurer</span>&lt;O, B&gt;&gt; <span class="keyword">void</span> <span class="title function_">add</span><span class="params">(C configurer)</span> &#123;</span><br><span class="line">        <span class="comment">// 省略了实现</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> &lt;C <span class="keyword">extends</span> <span class="title class_">SecurityConfigurer</span>&lt;O, B&gt;&gt; List&lt;C&gt; <span class="title function_">getConfigurers</span><span class="params">(Class&lt;C&gt; clazz)</span> &#123;</span><br><span class="line">        <span class="comment">// 省略了实现</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> &lt;C <span class="keyword">extends</span> <span class="title class_">SecurityConfigurer</span>&lt;O, B&gt;&gt; List&lt;C&gt; <span class="title function_">removeConfigurers</span><span class="params">(Class&lt;C&gt; clazz)</span> &#123;</span><br><span class="line">        <span class="comment">// 省略了实现</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> &lt;C <span class="keyword">extends</span> <span class="title class_">SecurityConfigurer</span>&lt;O, B&gt;&gt; C <span class="title function_">getConfigurer</span><span class="params">(Class&lt;C&gt; clazz)</span> &#123;</span><br><span class="line">        <span class="comment">// 省略了实现</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> &lt;C <span class="keyword">extends</span> <span class="title class_">SecurityConfigurer</span>&lt;O, B&gt;&gt; C <span class="title function_">removeConfigurer</span><span class="params">(Class&lt;C&gt; clazz)</span> &#123;</span><br><span class="line">        <span class="comment">// 省略了实现</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么，这些 SecurityConfigurer 又是在什么时候被使用的呢？原来，AbstractConfiguredSecurityBuilder 将构建分为了 5 个阶段，如下图所示：</p>
+<p><img src="/posts/308886303/2024-12-27-1001.png"></p>
+<p>在 <code>init()</code> 方法中会调用每一个 SecurityConfigurer 的 <code>init(builder)</code>；在 <code>configure()</code> 方法中会调用每一个 SecurityConfigurer 的 <code>configure(builder)</code>。源码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.security.config.annotation;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 省略了 import</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">AbstractConfiguredSecurityBuilder</span>&lt;O, B <span class="keyword">extends</span> <span class="title class_">SecurityBuilder</span>&lt;O&gt;&gt;</span><br><span class="line">    <span class="keyword">extends</span> <span class="title class_">AbstractSecurityBuilder</span>&lt;O&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">BuildState</span> <span class="variable">buildState</span> <span class="operator">=</span> BuildState.UNBUILT;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">final</span> O <span class="title function_">doBuild</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="built_in">this</span>.configurers) &#123;</span><br><span class="line">            <span class="built_in">this</span>.buildState = BuildState.INITIALIZING;</span><br><span class="line">            beforeInit();</span><br><span class="line">            init();</span><br><span class="line">            <span class="built_in">this</span>.buildState = BuildState.CONFIGURING;</span><br><span class="line">            beforeConfigure();</span><br><span class="line">            configure();</span><br><span class="line">            <span class="built_in">this</span>.buildState = BuildState.BUILDING;</span><br><span class="line">            <span class="type">O</span> <span class="variable">result</span> <span class="operator">=</span> performBuild();</span><br><span class="line">            <span class="built_in">this</span>.buildState = BuildState.BUILT;</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">beforeInit</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">beforeConfigure</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// * 由子类实现的，具体的构建方法 *</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">abstract</span> O <span class="title function_">performBuild</span><span class="params">()</span> <span class="keyword">throws</span> Exception;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">init</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        Collection&lt;SecurityConfigurer&lt;O, B&gt;&gt; configurers = getConfigurers();</span><br><span class="line">        <span class="keyword">for</span> (SecurityConfigurer&lt;O, B&gt; configurer : configurers) &#123;</span><br><span class="line">            configurer.init((B) <span class="built_in">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 这里暂且先忽略 configurersAddedInInitializing，留个悬念</span></span><br><span class="line">        <span class="keyword">for</span> (SecurityConfigurer&lt;O, B&gt; configurer : <span class="built_in">this</span>.configurersAddedInInitializing) &#123;</span><br><span class="line">            configurer.init((B) <span class="built_in">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">configure</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        Collection&lt;SecurityConfigurer&lt;O, B&gt;&gt; configurers = getConfigurers();</span><br><span class="line">        <span class="keyword">for</span> (SecurityConfigurer&lt;O, B&gt; configurer : configurers) &#123;</span><br><span class="line">            configurer.configure((B) <span class="built_in">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Collection&lt;SecurityConfigurer&lt;O, B&gt;&gt; <span class="title function_">getConfigurers</span><span class="params">()</span> &#123;</span><br><span class="line">        List&lt;SecurityConfigurer&lt;O, B&gt;&gt; result = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (List&lt;SecurityConfigurer&lt;O, B&gt;&gt; configs : <span class="built_in">this</span>.configurers.values()) &#123;</span><br><span class="line">            result.addAll(configs);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">enum</span> <span class="title class_">BuildState</span> &#123;</span><br><span class="line"></span><br><span class="line">        UNBUILT(<span class="number">0</span>),</span><br><span class="line">        INITIALIZING(<span class="number">1</span>),</span><br><span class="line">        CONFIGURING(<span class="number">2</span>),</span><br><span class="line">        BUILDING(<span class="number">3</span>),</span><br><span class="line">        BUILT(<span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> order;</span><br><span class="line"></span><br><span class="line">        BuildState(<span class="type">int</span> order) &#123;</span><br><span class="line">            <span class="built_in">this</span>.order = order;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于一个 AbstractConfiguredSecurityBuilder，它只能构建一次。如果在构建完成后，再添加 SecurityConfigurer，那是没有意义的。因此规定只能在 <code>CONFIGURING</code> 阶段之前添加 SecurityConfigurer。源码如下所示：</p>
+<div class="note default">
+            <p>为什么只能在 <code>CONFIGURING</code> 阶段之前添加 SecurityConfigurer，而不是 <code>INITIALIZING</code> 阶段之前呢？</p>
+          </div>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.security.config.annotation;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">AbstractConfiguredSecurityBuilder</span>&lt;O, B <span class="keyword">extends</span> <span class="title class_">SecurityBuilder</span>&lt;O&gt;&gt;</span><br><span class="line">    <span class="keyword">extends</span> <span class="title class_">AbstractSecurityBuilder</span>&lt;O&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> List&lt;SecurityConfigurer&lt;O, B&gt;&gt; configurersAddedInInitializing = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> &lt;C <span class="keyword">extends</span> <span class="title class_">SecurityConfigurer</span>&lt;O, B&gt;&gt; <span class="keyword">void</span> <span class="title function_">add</span><span class="params">(C configurer)</span> &#123;</span><br><span class="line">        Assert.notNull(configurer, <span class="string">&quot;configurer cannot be null&quot;</span>);</span><br><span class="line">        Class&lt;? <span class="keyword">extends</span> <span class="title class_">SecurityConfigurer</span>&lt;O, B&gt;&gt; clazz = (Class&lt;? <span class="keyword">extends</span> <span class="title class_">SecurityConfigurer</span>&lt;O, B&gt;&gt;) configurer</span><br><span class="line">            .getClass();</span><br><span class="line">        <span class="comment">// 这里和 doBuild() 竞争的是同一个对象，不允许 doBuild() 和本方法并发执行</span></span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="built_in">this</span>.configurers) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">this</span>.buildState.isConfigured()) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>(<span class="string">&quot;Cannot apply &quot;</span> + configurer + <span class="string">&quot; to already built object&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 此时，可能是 UNBUILT 阶段，doBuild() 方法还未执行</span></span><br><span class="line">            <span class="comment">// 也可能是 INITIALIZING 阶段，执行 init() 方法的线程重入</span></span><br><span class="line">            <span class="comment">// 也就是说，在 init() 方法中仍然可以添加 SecurityConfigurer</span></span><br><span class="line">            <span class="comment">// 例如：一个 SecurityConfigurer 在初始化时，又需要添加另一个 SecurityConfigurer</span></span><br><span class="line">            List&lt;SecurityConfigurer&lt;O, B&gt;&gt; configs = <span class="literal">null</span>;</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">this</span>.allowConfigurersOfSameType) &#123;</span><br><span class="line">                configs = <span class="built_in">this</span>.configurers.get(clazz);</span><br><span class="line">            &#125;</span><br><span class="line">            configs = (configs != <span class="literal">null</span>) ? configs : <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(<span class="number">1</span>);</span><br><span class="line">            configs.add(configurer);</span><br><span class="line">            <span class="built_in">this</span>.configurers.put(clazz, configs);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 由于在 SecurityConfigurer 初始化时新添加的 SecurityConfigurer 不会被遍历到</span></span><br><span class="line">            <span class="comment">// 因此还需要保存到 configurersAddedInInitializing</span></span><br><span class="line">            <span class="comment">// 注意：新添加的 SecurityConfigurer 不能在初始化时再添加另一个新的 SecurityConfigurer</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">this</span>.buildState.isInitializing()) &#123;</span><br><span class="line">                <span class="built_in">this</span>.configurersAddedInInitializing.add(configurer);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">enum</span> <span class="title class_">BuildState</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isInitializing</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> INITIALIZING.order == <span class="built_in">this</span>.order;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isConfigured</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.order &gt;= CONFIGURING.order;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>shark chili
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://blog.linliangjun.cn/posts/308886303/" title="Spring Security">https://blog.linliangjun.cn/posts/308886303/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Spring-Security/" rel="tag"><i class="fa fa-tag"></i> Spring Security</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/295680105/" rel="prev" title="Servlet 过滤器">
+      <i class="fa fa-chevron-left"></i> Servlet 过滤器
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Security-%E7%9A%84%E8%BF%87%E6%BB%A4%E5%99%A8%E9%93%BE"><span class="nav-number">1.</span> <span class="nav-text">Spring Security 的过滤器链</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F%EF%BC%88Builder-Pattern%EF%BC%89%E4%B8%8E-SecurityBuilder"><span class="nav-number">2.</span> <span class="nav-text">建造者模式（Builder Pattern）与 SecurityBuilder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%BC%8F%E7%BC%96%E7%A8%8B%E4%B8%8E-SecurityConfigurer"><span class="nav-number">3.</span> <span class="nav-text">配置式编程与 SecurityConfigurer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E9%85%8D%E7%BD%AE%E5%BC%8F%E7%BC%96%E7%A8%8B%E7%9A%84-SecurityBuilder"><span class="nav-number">4.</span> <span class="nav-text">支持配置式编程的 SecurityBuilder</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="shark chili"
+      src="https://i.ssjz8.com/upload/1/img2.baidu.com%2Fit%2Fu%3D3694723015%2C609042305%26fm%3D253%26fmt%3Dauto%26app%3D138%26f%3DJPEG%3Fw%3D500%26h%3D500">
+  <p class="site-author-name" itemprop="name">shark chili</p>
+  <div class="site-description" itemprop="description">Talk is cheap. Show me the code.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/linliangjun" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;linliangjun" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">shark chili</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
